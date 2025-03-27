@@ -1,0 +1,118 @@
+-- MM2 Hack GUI - Optimized & Stable Version
+
+-- Services
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- Create GUI Elements
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+
+-- Parent to Player's GUI
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Toggle GUI with T key
+local guiVisible = false
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.T then
+        guiVisible = not guiVisible
+        MainFrame.Visible = guiVisible
+    end
+end)
+
+-- Main Frame Properties
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 300, 0, 400)
+MainFrame.Visible = false
+UICorner.Parent = MainFrame
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 3
+UIStroke.Color = Color3.fromRGB(0, 255, 255)
+
+-- Title
+Title.Parent = MainFrame
+Title.Text = "MM2 Hack GUI"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 20
+
+-- Functions for Hacks
+local function enableESP()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local highlight = Instance.new("Highlight", player.Character)
+            highlight.FillColor = Color3.fromRGB(255, 255, 255)
+        end
+    end
+    print("ESP Activated")
+end
+
+local function teleportToRandomPlayer()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+            print("Teleported to Player: " .. player.Name)
+            break
+        end
+    end
+end
+
+local function enableFly()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.PlatformStand = true
+        LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 50, 0)
+    end
+    print("Fly Activated")
+end
+
+local function enableCoinFarm()
+    while wait(1) do
+        local coins = workspace:FindFirstChild("Coins")
+        if coins then
+            for _, coin in pairs(coins:GetChildren()) do
+                if coin:IsA("BasePart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = coin.CFrame
+                end
+            end
+        end
+    end
+end
+
+local function enableKillAura()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Health = 0
+        end
+    end
+    print("Kill Aura Activated")
+end
+
+-- Buttons
+local function createButton(text, pos, callback)
+    local button = Instance.new("TextButton")
+    button.Parent = MainFrame
+    button.Text = text
+    button.Size = UDim2.new(0, 200, 0, 40)
+    button.Position = UDim2.new(0.5, -100, pos, 0)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.SourceSansBold
+    button.TextSize = 16
+    button.MouseButton1Click:Connect(callback)
+end
+
+createButton("ESP", 0.1, enableESP)
+createButton("Teleport", 0.2, teleportToRandomPlayer)
+createButton("Fly", 0.3, enableFly)
+createButton("Coin Farm", 0.4, enableCoinFarm)
+createButton("Kill Aura", 0.5, enableKillAura)
